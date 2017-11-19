@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/bash
 # Linux post install wrapper
 #
 # Currently Supported Operating Systems:
@@ -22,24 +21,24 @@ esac
 
 # Check wget
 if [ -e '/usr/bin/wget' ]; then
-    wget https://raw.githubusercontent.com/stasisha/teamcity/master/teamcity-install-$type.sh -O teamcity-install-$type.sh
+    wget https://raw.githubusercontent.com/stasisha/linux-postinstall/master/linux-postinstall-$type.sh -O linux-postinstall-$type.sh
     if [ "$?" -eq '0' ]; then
-        bash teamcity-install-$type.sh $*
+        bash linux-postinstall-$type.sh $*
         exit
     else
-        echo "Error: teamcity-install-$type.sh download failed."
+        echo "Error: linux-postinstall-$type.sh download failed."
         exit 1
     fi
 fi
 
 # Check curl
 if [ -e '/usr/bin/curl' ]; then
-    curl -O https://raw.githubusercontent.com/stasisha/teamcity/master/teamcity-install-$type.sh
+    curl -O https://raw.githubusercontent.com/stasisha/linux-postinstall/master/linux-postinstall-$type.sh
     if [ "$?" -eq '0' ]; then
-        bash teamcity-install-$type.sh $*
+        bash linux-postinstall-$type.sh $*
         exit
     else
-        echo "Error: teamcity-install-$type.sh download failed."
+        echo "Error: linux-postinstall-$type.sh download failed."
         exit 1
     fi
 fi
