@@ -21,7 +21,7 @@ esac
 
 # Check wget
 if [ -e '/usr/bin/wget' ]; then
-    wget https://raw.githubusercontent.com/stasisha/linux-postinstall/master/postinstall-$type.sh -O postinstall-$type.sh
+    wget https://raw.githubusercontent.com/stasisha/linux-desktop-postinstall/master/postinstall-$type.sh -O postinstall-$type.sh
     if [ "$?" -eq '0' ]; then
         bash postinstall-$type.sh $*
         exit
@@ -33,7 +33,7 @@ fi
 
 # Check curl
 if [ -e '/usr/bin/curl' ]; then
-    curl -O https://raw.githubusercontent.com/stasisha/linux-postinstall/master/postinstall-$type.sh
+    curl -O https://raw.githubusercontent.com/stasisha/linux-desktop-postinstall/master/postinstall-$type.sh
     if [ "$?" -eq '0' ]; then
         bash postinstall-$type.sh $*
         exit
