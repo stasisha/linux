@@ -21,24 +21,24 @@ esac
 
 # Check wget
 if [ -e '/usr/bin/wget' ]; then
-    wget https://raw.githubusercontent.com/stasisha/linux-postinstall/master/linux-postinstall-$type.sh -O linux-postinstall-$type.sh
+    wget https://raw.githubusercontent.com/stasisha/linux-postinstall/master/postinstall-$type.sh -O postinstall-$type.sh
     if [ "$?" -eq '0' ]; then
-        bash linux-postinstall-$type.sh $*
+        bash postinstall-$type.sh $*
         exit
     else
-        echo "Error: linux-postinstall-$type.sh download failed."
+        echo "Error: postinstall-$type.sh download failed."
         exit 1
     fi
 fi
 
 # Check curl
 if [ -e '/usr/bin/curl' ]; then
-    curl -O https://raw.githubusercontent.com/stasisha/linux-postinstall/master/linux-postinstall-$type.sh
+    curl -O https://raw.githubusercontent.com/stasisha/linux-postinstall/master/postinstall-$type.sh
     if [ "$?" -eq '0' ]; then
-        bash linux-postinstall-$type.sh $*
+        bash postinstall-$type.sh $*
         exit
     else
-        echo "Error: linux-postinstall-$type.sh download failed."
+        echo "Error: postinstall-$type.sh download failed."
         exit 1
     fi
 fi
