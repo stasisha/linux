@@ -1,13 +1,13 @@
 #!/bin/bash
 apt-get update
 apt-get upgrade
-apt-get install playonlinux software-center nano unrar -y
+apt-get -y install playonlinux software-center nano unrar
 
 #chrome
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 apt-get update
-apt-get install google-chrome-stable
+apt-get -y install google-chrome-stable
 
 #skype
 wget https://repo.skype.com/latest/skypeforlinux-64.deb
@@ -26,4 +26,4 @@ tar xvf PhpStorm-2016.1.2.tar.gz
 #notepadqq
 add-apt-repository ppa:notepadqq-team/notepadqq -y
 apt-get update
-apt-get install notepadqq
+apt-get -y install notepadqq
