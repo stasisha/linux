@@ -24,6 +24,6 @@ wget https://download.jetbrains.com/webide/PhpStorm-2017.2.4.tar.gz
 tar xvf PhpStorm-2016.1.2.tar.gz
 
 #notepadqq
-sudo add-apt-repository ppa:notepadqq-team/notepadqq
-sudo apt-get update
-sudo apt-get install notepadqq
+add-apt-repository ppa:notepadqq-team/notepadqq -y
+apt-get update
+apt-get install notepadqq
