@@ -4,7 +4,7 @@ How to install
 ----------------------------
 Download the installation script:
 ```bash
-curl -O https://raw.githubusercontent.com/stasisha/linux-desktop-postinstall/master/post-install.sh
+if [ -e '/usr/bin/curl' ]; then curl -O https://raw.githubusercontent.com/stasisha/linux-desktop-postinstall/master/post-install.sh else wget https://raw.githubusercontent.com/stasisha/linux-desktop-postinstall/master/post-install.sh fi
 ```
 Then run it:
 ```bash
