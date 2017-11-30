@@ -115,12 +115,18 @@ fi
 if [ "$notepadqq" == 'y' ] || [ "$notepadqq" == 'Y'  ]; then
     case $(type) in
         debian)
-            apt-get -y install qt5-qmake libqt5webkit5 libqt5svg5 coreutils libqt5webkit5-dev libqt5svg5-dev qttools5-dev-tools git
-            git clone https://github.com/notepadqq/notepadqq.git
-            cd notepadqq
-            ./configure
-            make
-            make install
+            #https://launchpad.net/%7Enotepadqq-team/+archive/ubuntu/notepadqq/+packages
+        
+            #amd64
+            https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+build/13579637
+            #i386
+            https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+build/13579638
+            
+            #common
+            https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+files/notepadqq-common_1.2.0-1~zesty1_all.deb
+            
+            dpkg -i notepadqq-common_1.2.0-1~zesty1_all.deb 
+            dpkg -i notepadqq_1.2.0-1~zesty1_i386.deb
             ;;
         ubuntu)
             add-apt-repository ppa:notepadqq-team/notepadqq -y
