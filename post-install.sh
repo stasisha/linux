@@ -93,9 +93,9 @@ fi
 
 # Skype
 if [ "$skype" == 'y' ] || [ "$skype" == 'Y'  ]; then
-    wget https://repo.skype.com/latest/skypeforlinux-64.deb
-    dpkg -i skypeforlinux-64.deb
-    rm -f skypeforlinux-64.deb
+    wget https://repo.skype.com/latest/skypeforlinux-64.deb  O /tmp/skypeforlinux-64.deb 
+    dpkg -i /tmp/skypeforlinux-64.deb
+    rm -f /tmp/skypeforlinux-64.deb
 fi
 
 # Viber
@@ -107,8 +107,8 @@ fi
 
 # PhpStorm
 if [ "$phpstorm" == 'y' ] || [ "$phpstorm" == 'Y'  ]; then
-    wget https://download.jetbrains.com/webide/PhpStorm-2017.2.4.tar.gz
-    tar xvf PhpStorm-2016.1.2.tar.gz
+    wget https://download.jetbrains.com/webide/PhpStorm-2017.2.4.tar.gz - O /tmp/PhpStorm.tar.gz
+    tar xvf /tmp/PhpStorm.tar.gz
 fi
 
 # Notepadqq
