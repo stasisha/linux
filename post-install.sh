@@ -18,6 +18,8 @@ case $(head -n1 /etc/issue | cut -f 1 -d ' ') in
     Debian)
         type="debian"
         pm="apt-get"
+        echo "deb http://http.us.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list
+        apt-get update
         ;;
     Ubuntu)
         type="ubuntu"
@@ -51,7 +53,6 @@ fi
 
 # Upgrade
 if [ "$upgrade" == 'y' ] || [ "$upgrade" == 'Y'  ]; then
-    eval "${pm} update"
     eval "${pm} upgrade"
 fi
 
