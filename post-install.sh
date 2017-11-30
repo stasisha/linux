@@ -18,8 +18,6 @@ case $(head -n1 /etc/issue | cut -f 1 -d ' ') in
     Debian)
         type="debian"
         pm="apt-get"
-        echo "deb http://http.us.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list
-        apt-get update
         ;;
     Ubuntu)
         type="ubuntu"
@@ -30,8 +28,6 @@ case $(head -n1 /etc/issue | cut -f 1 -d ' ') in
         pm="yum"
         ;;
 esac
-
-install="${pm} -y install"
 
 read -p 'Would you like to upgrade system? [y/n]: ' upgrade
 read -p 'Would you like to install Play On Linux? [y/n]: ' pol
@@ -44,6 +40,22 @@ read -p 'Would you like to install PhpStorm? [y/n]: ' phpstorm
 read -p 'Would you like to install Notepadqq? [y/n]: ' notepadqq
 read -p 'Would you like to install Filezilla? [y/n]: ' filezilla
 read -p 'Would you like to install Vesta? [y/n]: ' vesta
+
+case $type in
+    debian)
+        # Debian special commands
+        echo "deb http://http.us.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list
+        apt-get update
+        ;;
+    ubuntu)
+        # Ubuntu special commands
+        ;;
+    rhel)
+        # RHEL/CentOS special commands
+        ;;
+esac
+
+install="${pm} -y install"
 
 # Vesta
 if [ "$upgrade" == 'y' ] || [ "$upgrade" == 'Y'  ]; then
@@ -101,9 +113,25 @@ fi
 
 # Notepadqq
 if [ "$notepadqq" == 'y' ] || [ "$notepadqq" == 'Y'  ]; then
-    add-apt-repository ppa:notepadqq-team/notepadqq -y
-    eval "${pm} update"
-    eval "${install} notepadqq"
+    case $(type) in
+        debian)
+            apt-get -y install qt5-qmake libqt5webkit5 libqt5svg5 coreutils libqt5webkit5-dev libqt5svg5-dev qttools5-dev-tools git
+            git clone https://github.com/notepadqq/notepadqq.git
+            cd notepadqq
+            ./configure
+            make
+            make install
+            ;;
+        ubuntu)
+            add-apt-repository ppa:notepadqq-team/notepadqq -y
+            eval "${pm} update"
+            eval "${install} notepadqq"
+            ;;
+        rhel)
+            type="rhel"
+            pm="yum"
+            ;;
+    esac
 fi
 
 # FileZilla
