@@ -29,6 +29,8 @@ case $(head -n1 /etc/issue | cut -f 1 -d ' ') in
         ;;
 esac
 
+install="${pm} -y install"
+
 read -p 'Would you like to upgrade system? [y/n]: ' upgrade
 read -p 'Would you like to install Play On Linux? [y/n]: ' pol
 read -p 'Would you like to install Software Center? [y/n]: ' osc
@@ -49,61 +51,61 @@ fi
 
 # Upgrade
 if [ "$upgrade" == 'y' ] || [ "$upgrade" == 'Y'  ]; then
-    eval "$pm update"
-    eval "$pm upgrade"
+    eval "${pm} update"
+    eval "${pm} upgrade"
 fi
 
 # Play On Linux
 if [ "$pol" == 'y' ] || [ "$pol" == 'Y'  ]; then
-    apt-get -y install playonlinux
+    eval "${install} playonlinux"
 fi
 
 # Software-center
 if [ "$osc" == 'y' ] || [ "$osc" == 'Y'  ]; then
-    apt-get -y install software-center
+    eval "${install} software-center"
 fi
 
 # Unrar
 if [ "$osc" == 'y' ] || [ "$unrar" == 'Y'  ]; then
-    apt-get -y install unrar
+    eval "${install} unrar"
 fi
 
 # Chrome
 if [ "$chrome" == 'y' ] || [ "$chrome" == 'Y'  ]; then
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-    apt-get update
-    apt-get -y install google-chrome-stable
+    eval "${pm} update"
+    eval "${install} google-chrome-stable"
 fi
 
 # Skype
 if [ "$skype" == 'y' ] || [ "$skype" == 'Y'  ]; then
-  wget https://repo.skype.com/latest/skypeforlinux-64.deb
-  dpkg -i skypeforlinux-64.deb
-  rm -f skypeforlinux-64.deb
+    wget https://repo.skype.com/latest/skypeforlinux-64.deb
+    dpkg -i skypeforlinux-64.deb
+    rm -f skypeforlinux-64.deb
 fi
 
 # Viber
 if [ "$viber" == 'y' ] || [ "$viber" == 'Y'  ]; then
-  wget http://download.cdn.viber.com/cdn/desktop/Linux/viber.deb - O /tmp/viber.deb
-  dpkg -i /tmp/viber.deb
-  rm -f /tmp/viber.deb
+    wget http://download.cdn.viber.com/cdn/desktop/Linux/viber.deb - O /tmp/viber.deb
+    dpkg -i /tmp/viber.deb
+    rm -f /tmp/viber.deb
 fi
 
 # PhpStorm
 if [ "$phpstorm" == 'y' ] || [ "$phpstorm" == 'Y'  ]; then
-  wget https://download.jetbrains.com/webide/PhpStorm-2017.2.4.tar.gz
-  tar xvf PhpStorm-2016.1.2.tar.gz
+    wget https://download.jetbrains.com/webide/PhpStorm-2017.2.4.tar.gz
+    tar xvf PhpStorm-2016.1.2.tar.gz
 fi
 
 # Notepadqq
 if [ "$notepadqq" == 'y' ] || [ "$notepadqq" == 'Y'  ]; then
-  add-apt-repository ppa:notepadqq-team/notepadqq -y
-  apt-get update
-  apt-get -y install notepadqq
+    add-apt-repository ppa:notepadqq-team/notepadqq -y
+    eval "${pm} update"
+    eval "${install} notepadqq"
 fi
 
 # FileZilla
 if [ "$filezilla" == 'y' ] || [ "$filezilla" == 'Y'  ]; then
-  apt-get -y install filezilla
+    eval "${install} filezilla"
 fi
