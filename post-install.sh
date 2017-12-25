@@ -58,7 +58,7 @@ esac
 install="${pm} -y install"
 
 # Vesta
-if [ "$upgrade" == 'y' ] || [ "$upgrade" == 'Y'  ]; then
+if [ "$vesta" == 'y' ] || [ "$vesta" == 'Y'  ]; then
     curl -O https://raw.githubusercontent.com/stasisha/vesta/master/install/vst-install.sh
     bash vst-install.sh
 fi
