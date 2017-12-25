@@ -79,7 +79,7 @@ if [ "$osc" == 'y' ] || [ "$osc" == 'Y'  ]; then
 fi
 
 # Unrar
-if [ "$osc" == 'y' ] || [ "$unrar" == 'Y'  ]; then
+if [ "$unrar" == 'y' ] || [ "$unrar" == 'Y'  ]; then
     eval "${install} unrar"
 fi
 
