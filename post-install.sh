@@ -107,8 +107,20 @@ fi
 
 # PhpStorm
 if [ "$phpstorm" == 'y' ] || [ "$phpstorm" == 'Y'  ]; then
-    wget https://download.jetbrains.com/webide/PhpStorm-2017.2.4.tar.gz - O /tmp/PhpStorm.tar.gz
-    tar xvf /tmp/PhpStorm.tar.gz
+
+    case $(type) in
+        debian)
+            wget https://download-cf.jetbrains.com/webide/PhpStorm-2018.2.2.tar.gz - O /tmp/PhpStorm.tar.gz
+            tar xvf /tmp/PhpStorm.tar.gz
+            ;;
+        ubuntu)
+            eval "snap install phpstorm --classic"
+            ;;
+        rhel)
+            type="rhel"
+            pm="yum"
+            ;;
+    esac
 fi
 
 # Notepadqq
