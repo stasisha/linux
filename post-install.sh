@@ -52,6 +52,8 @@ case $type in
         ;;
     rhel)
         # RHEL/CentOS special commands
+        dhclient
+        yum update
         ;;
 esac
 
