@@ -1,12 +1,8 @@
-Linux Post Install Script
+Ubuntu Post Install Script
 ==================================================
-How to install
+How to run
 ----------------------------
-Download the installation script:
+Download and run installation script with single line:
 ```bash
-curl -O https://raw.githubusercontent.com/stasisha/linux-desktop-postinstall/master/post-install.sh
-```
-Then run it:
-```bash
-bash post-install.sh
+curl -O https://raw.githubusercontent.com/stasisha/ubuntu-postinstall/master/post-install.sh && bash post-install.sh
 ```
