@@ -17,7 +17,6 @@ read -p 'Would you like to install Viber? [y/n]: ' viber
 read -p 'Would you like to install PhpStorm? [y/n]: ' phpstorm
 read -p 'Would you like to install Notepadqq? [y/n]: ' notepadqq
 read -p 'Would you like to install Filezilla? [y/n]: ' filezilla
-read -p 'Would you like to install Vesta? [y/n]: ' vesta
 
 pm="apt-get"
 
