@@ -64,8 +64,7 @@ read -p 'Would you like to install Viber? [y/n]: ' viber
 read -p 'Would you like to install PhpStorm? [y/n]: ' phpstorm
 read -p 'Would you like to install Notepadqq? [y/n]: ' notepadqq
 read -p 'Would you like to install Filezilla? [y/n]: ' filezilla
-read -p 'Would you like to install Vesta? [y/n]: ' vesta
-read -p 'Would you like to install Vesta? [y/n]: ' zsh
+read -p 'Would you like to install zsh? [y/n]: ' zsh
 
 #functions zone 
 addLineToBottomIfNotExists() {
@@ -83,6 +82,12 @@ install-brew(){
     echo >&2 "Installing homebrew..."
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   }
+}
+
+install-xcode(){
+    command -v xcode-select >/dev/null 2>&1 || {
+    echo >&2 "Installing xcode-select..."
+    xcode-select --install
 }
 
 brew-install-if-not-installed() {
@@ -151,54 +156,49 @@ install="${pm} -y install"
 
 # zsh
 if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
+
+    #oh-my-zsh
+    if [ ! -d "~/.oh-my-zsh" ]; then
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    fi
+
+    eval "${install} zsh fzf"
     case $(type) in
-        macos)
-            brew-install-if-not-installed "fzf"
+          macos)
+              cd ~/Library/Fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+              cd -
 
-            cd ~/Library/Fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
-            cd -
+              if [ -d "${ZSH_CUSTOM}/themes/powerlevel10k" ]; then
+                  git -C ~$ZSH_CUSTOM/themes/powerlevel10k pull
+              else
+                  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
+              fi
 
-            #oh-my-zsh
-            if [ ! -d "~/.oh-my-zsh" ]; then
-               sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-            fi
+              curl -L https://raw.githubusercontent.com/stasisha/zsh/master/.appearance.sh -o ~/.appearance.sh
 
-            if [ -d "${ZSH_CUSTOM}/themes/powerlevel10k" ]; then
-                git -C ~$ZSH_CUSTOM/themes/powerlevel10k pull
-            else
-                git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
-            fi
+              removeLine 'source $ZSH\/oh-my-zsh.sh' ~/.zshrc
+              addLineToBottomIfNotExists 'source ~/.appearance.sh' ~/.zshrc
+              addLineToBottomIfNotExists 'source $ZSH/oh-my-zsh.sh' ~/.zshrc
 
-            curl -L https://raw.githubusercontent.com/stasisha/zsh/master/.appearance.sh -o ~/.appearance.sh
+              zsh -l
+              ;;
+          debian)
 
-            removeLine 'source $ZSH\/oh-my-zsh.sh' ~/.zshrc
-            addLineToBottomIfNotExists 'source ~/.appearance.sh' ~/.zshrc
-            addLineToBottomIfNotExists 'source $ZSH/oh-my-zsh.sh' ~/.zshrc
-
-            zsh -l
-            ;;
-        debian)
-            wget https://download-cf.jetbrains.com/webide/PhpStorm-2018.2.2.tar.gz - O /tmp/PhpStorm.tar.gz
-            tar xvf /tmp/PhpStorm.tar.gz
-            ;;
-        ubuntu)
-            eval "${install} snapd snapd-xdg-openCopy"
-            eval "snap install phpstorm --classic"
-            ;;
-        rhel)
-            type="rhel"
-            pm="yum"
-            ;;
+              ;;
+          ubuntu)
+              eval "${install} snapd snapd-xdg-openCopy"
+              eval "snap install phpstorm --classic"
+              ;;
+          rhel)
+              type="rhel"
+              pm="yum"
+              ;;
     esac
 fi
 
 # Xcode-select
 if [ "$xcodeselect" == 'y' ] || [ "$xcodeselect" == 'Y'  ]; then
-    install-xcode(){
-        command -v xcode-select >/dev/null 2>&1 || {
-        echo >&2 "Installing xcode-select..."
-        xcode-select --install
-    }
+    install-xcode
 fi
 
 # Vesta
