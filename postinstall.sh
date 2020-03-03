@@ -168,7 +168,7 @@ if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
             else
                 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
             fi
-            
+
             curl -L https://raw.githubusercontent.com/stasisha/zsh/master/.appearance.sh -o ~/.appearance.sh
 
             removeLine 'source $ZSH\/oh-my-zsh.sh' ~/.zshrc
@@ -176,6 +176,7 @@ if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
             addLineToBottomIfNotExists 'source $ZSH/oh-my-zsh.sh' ~/.zshrc
 
             zsh -l
+            ;;
         debian)
             wget https://download-cf.jetbrains.com/webide/PhpStorm-2018.2.2.tar.gz - O /tmp/PhpStorm.tar.gz
             tar xvf /tmp/PhpStorm.tar.gz
