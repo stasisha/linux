@@ -96,38 +96,6 @@ installNerdFontsLinux(){
     cd ~/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
 }
 
-brew-install-if-not-installed() {
-  local software=$1
-  local caskSoftware=$2
-
-  # removing already installed packages from the list
-  for p in $(brew list); do
-    software=${software//$p/}
-  done;
-
-  for p in $(brew list); do
-    caskSoftware=${caskSoftware//$p/}
-  done;
-
-  if [ -z "$software" ] && [ -z "$caskSoftware" ]; then
-    echo "Nothing to install."
-  else
-    install-brew
-    brew update
-
-    if [ -n "$software" ]; then
-      echo "Installing $software"
-      brew install "$software"
-    fi
-
-    if [ -n "$caskSoftware" ]; then
-      echo "Installing cask ${caskSoftware}"
-      brew cask install "${caskSoftware}"
-    fi
-
-    brew cleanup
-  fi
-}
 
 #end functions zone
 
@@ -167,6 +135,48 @@ esac
 
 install="${pm} -y install"
 
+linux-install-if-not-installed(){
+  PKG_OK=$(dpkg-query -W --showformat='${Status}\n' the.package.name|grep "install ok installed")
+  echo Checking for somelib: $PKG_OK
+  if [ "" == "$PKG_OK" ]; then
+    echo "No somelib. Setting up somelib."
+    eval "${install} $1 $2"
+  fi
+}
+
+brew-install-if-not-installed() {
+  local software=$1
+  local caskSoftware=$2
+
+  # removing already installed packages from the list
+  for p in $(brew list); do
+    software=${software//$p/}
+  done;
+
+  for p in $(brew list); do
+    caskSoftware=${caskSoftware//$p/}
+  done;
+
+  if [ -z "$software" ] && [ -z "$caskSoftware" ]; then
+    echo "Nothing to install."
+  else
+    install-brew
+    brew update
+
+    if [ -n "$software" ]; then
+      echo "Installing $software"
+      brew install "$software"
+    fi
+
+    if [ -n "$caskSoftware" ]; then
+      echo "Installing cask ${caskSoftware}"
+      brew cask install "${caskSoftware}"
+    fi
+
+    brew cleanup
+  fi
+}
+
 install-if-not-installed() {
   local software=$1
   local caskSoftware=$2
@@ -177,16 +187,15 @@ install-if-not-installed() {
         ;;
     debian)
         # Debian special commands
-
+        linux-install-if-not-installed "$software" "$caskSoftware"
         ;;
     ubuntu)
         # Ubuntu special commands
-
+        linux-install-if-not-installed "$software" "$caskSoftware"
         ;;
     rhel)
         # RHEL/CentOS special commands
-
-        dhclient
+        linux-install-if-not-installed "$software" "$caskSoftware"
         yum update
         ;;
     esac
@@ -302,7 +311,8 @@ if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     fi
 
-    eval "${install} zsh fzf"
+    install-if-not-installed "zsh"
+    install-if-not-installed "fzf"
 
     if [ -d "${ZSH_CUSTOM}/themes/powerlevel10k" ]; then
         git -C "~$ZSH_CUSTOM"/themes/powerlevel10k pull
