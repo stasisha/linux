@@ -142,6 +142,7 @@ case $type in
         read -p 'Would you like to install Software Center? [y/n]: ' osc
         read -p 'Would you like to install Play On Linux? [y/n]: ' pol
         read -p 'Would you like to install Synology Guest Tool? [y/n]: ' synology
+        read -p 'Would you like to install Vesta? [y/n]: ' vesta
         apt install snapd snapd-xdg-open
         echo "deb http://http.us.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list
         apt-get update
@@ -151,12 +152,14 @@ case $type in
         read -p 'Would you like to install Software Center? [y/n]: ' osc
         read -p 'Would you like to install Play On Linux? [y/n]: ' pol
         read -p 'Would you like to install Synology Guest Tool? [y/n]: ' synology
+        read -p 'Would you like to install Vesta? [y/n]: ' vesta
         ;;
     rhel)
         # RHEL/CentOS special commands
         read -p 'Would you like to install Software Center? [y/n]: ' osc
         read -p 'Would you like to install Play On Linux? [y/n]: ' pol
         read -p 'Would you like to install Synology Guest Tool? [y/n]: ' synology
+        read -p 'Would you like to install Vesta? [y/n]: ' vesta
         dhclient
         yum update
         ;;
