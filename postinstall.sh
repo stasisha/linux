@@ -1,8 +1,9 @@
 #!/bin/bash
-# Linux post install wrapper
+# Post install wrapper
 #
 # Currently Supported Operating Systems:
 #
+# MacOS
 # Ubuntu
 # RHEL/CentOS
 # Debian
@@ -14,7 +15,8 @@ if [ "x$(id -u)" != 'x0' ]; then
 fi
 
 # Detect OS
-case $(head -n1 /etc/issue | cut -f 1 -d ' ') in
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  case $(head -n1 /etc/issue | cut -f 1 -d ' ') in
     Debian)
         type="debian"
         pm="apt-get"
@@ -27,10 +29,34 @@ case $(head -n1 /etc/issue | cut -f 1 -d ' ') in
         type="rhel"
         pm="yum"
         ;;
-esac
+    esac
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+     # Mac OSX
+    type="macos"
+    pm="brew"
+elif [[ "$OSTYPE" == "cygwin" ]]; then
+    # POSIX compatibility layer and Linux environment emulation for Windows
+    type="cygwin"
+    notSupportedOS
+elif [[ "$OSTYPE" == "msys" ]]; then
+    type="msys"
+     notSupportedOS
+elif [[ "$OSTYPE" == "win32" ]]; then
+    type="msys"
+    notSupportedOS
+elif [[ "$OSTYPE" == "freebsd"* ]]; then
+    type="msys"
+    notSupportedOS
+else
+    notSupportedOS
+fi
+
+notSupportedOS(){
+    echo "OS is not supported."
+    exit 1;
+}
 
 read -p 'Would you like to upgrade system? [y/n]: ' upgrade
-read -p 'Would you like to install Software Center? [y/n]: ' osc
 read -p 'Would you like to install Unrar? [y/n]: ' unrar
 read -p 'Would you like to install Chrome? [y/n]: ' chrome
 read -p 'Would you like to install Skype? [y/n]: ' skype
@@ -39,15 +65,79 @@ read -p 'Would you like to install PhpStorm? [y/n]: ' phpstorm
 read -p 'Would you like to install Notepadqq? [y/n]: ' notepadqq
 read -p 'Would you like to install Filezilla? [y/n]: ' filezilla
 read -p 'Would you like to install Vesta? [y/n]: ' vesta
+read -p 'Would you like to install Vesta? [y/n]: ' zsh
+
+#functions zone 
+addLineToBottomIfNotExists() {
+  local LINE=$1
+  local FILE=$2
+  grep -qF -- "$LINE" "$FILE" || echo "$LINE" | tee -a "$FILE"
+}
+
+removeLine(){
+    sed -i "" -e "/^$1/d" $2
+}
+
+install-brew(){
+  command -v brew >/dev/null 2>&1 || {
+    echo >&2 "Installing homebrew..."
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  }
+}
+
+brew-install-if-not-installed() {
+  local software=$1
+  local caskSoftware=$2
+
+  # removing already installed packages from the list
+  for p in $(brew list); do
+    software=${software//$p/}
+  done;
+
+  for p in $(brew list); do
+    caskSoftware=${caskSoftware//$p/}
+  done;  
+
+  if [ -z "$software" ] && [ -z "$caskSoftware" ]; then
+    echo "Nothing to install."
+  else
+    install-brew
+    brew update
+
+    if [ -n "$software" ]; then
+      echo "Installing $software"
+      brew install "$software"
+    fi
+
+    if [ -n "$caskSoftware" ]; then
+      echo "Installing cask ${caskSoftware}"
+      brew cask install "${caskSoftware}"
+    fi
+
+    brew cleanup
+  fi
+}
+
+#end functions zone
 
 case $type in
+    macos)
+        # Mac special commands
+        read -p 'Would you like to install xcode-select? [y/n]: ' xcodeselect 
+        install-brew
+
+        ;;
     debian)
         # Debian special commands
+        read -p 'Would you like to install Software Center? [y/n]: ' osc
+        read -p 'Would you like to install Play On Linux? [y/n]: ' pol
+
         echo "deb http://http.us.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list
         apt-get update
         ;;
     ubuntu)
         # Ubuntu special commands
+        read -p 'Would you like to install Software Center? [y/n]: ' osc
         read -p 'Would you like to install Play On Linux? [y/n]: ' pol
         ;;
     rhel)
@@ -58,6 +148,57 @@ case $type in
 esac
 
 install="${pm} -y install"
+
+# zsh
+if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
+    case $(type) in
+        macos)
+            brew-install-if-not-installed "fzf"
+
+            cd ~/Library/Fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+            cd -
+
+            #oh-my-zsh
+            if [ ! -d "~/.oh-my-zsh" ]; then
+               sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+            fi
+
+            if [ -d "${ZSH_CUSTOM}/themes/powerlevel10k" ]; then
+                git -C ~$ZSH_CUSTOM/themes/powerlevel10k pull
+            else
+                git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
+            fi
+            
+            curl -L https://raw.githubusercontent.com/stasisha/zsh/master/.appearance.sh -o ~/.appearance.sh
+
+            removeLine 'source $ZSH\/oh-my-zsh.sh' ~/.zshrc
+            addLineToBottomIfNotExists 'source ~/.appearance.sh' ~/.zshrc
+            addLineToBottomIfNotExists 'source $ZSH/oh-my-zsh.sh' ~/.zshrc
+
+            zsh -l
+        debian)
+            wget https://download-cf.jetbrains.com/webide/PhpStorm-2018.2.2.tar.gz - O /tmp/PhpStorm.tar.gz
+            tar xvf /tmp/PhpStorm.tar.gz
+            ;;
+        ubuntu)
+            eval "${install} snapd snapd-xdg-openCopy"
+            eval "snap install phpstorm --classic"
+            ;;
+        rhel)
+            type="rhel"
+            pm="yum"
+            ;;
+    esac
+fi
+
+# Xcode-select
+if [ "$xcodeselect" == 'y' ] || [ "$xcodeselect" == 'Y'  ]; then
+    install-xcode(){
+        command -v xcode-select >/dev/null 2>&1 || {
+        echo >&2 "Installing xcode-select..."
+        xcode-select --install
+    }
+fi
 
 # Vesta
 if [ "$vesta" == 'y' ] || [ "$vesta" == 'Y'  ]; then
@@ -109,8 +250,9 @@ fi
 
 # PhpStorm
 if [ "$phpstorm" == 'y' ] || [ "$phpstorm" == 'Y'  ]; then
-
     case $(type) in
+        macos)
+            brew-install-if-not-installed "" phpstorm
         debian)
             wget https://download-cf.jetbrains.com/webide/PhpStorm-2018.2.2.tar.gz - O /tmp/PhpStorm.tar.gz
             tar xvf /tmp/PhpStorm.tar.gz
