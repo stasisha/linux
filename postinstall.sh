@@ -167,6 +167,32 @@ esac
 
 install="${pm} -y install"
 
+install-if-not-installed() {
+  local software=$1
+  local caskSoftware=$2
+
+  case $type in
+        macos)
+        brew-install-if-not-installed "$software" "$caskSoftware"
+        ;;
+    debian)
+        # Debian special commands
+
+        ;;
+    ubuntu)
+        # Ubuntu special commands
+
+        ;;
+    rhel)
+        # RHEL/CentOS special commands
+
+        dhclient
+        yum update
+        ;;
+    esac
+}
+
+
 # Xcode-select
 if [ "$xcodeselect" == 'y' ] || [ "$xcodeselect" == 'Y'  ]; then
     install-xcode
@@ -185,22 +211,22 @@ fi
 
 # synology
 if [ "$synology" == 'y' ] || [ "$synology" == 'Y'  ]; then
-    eval "${pm} qemu-guest-agent"
+     install-if-not-installed  "qemu-guest-agent"
 fi
 
 # Play On Linux
 if [ "$pol" == 'y' ] || [ "$pol" == 'Y'  ]; then
-    eval "${install} playonlinux"
+    install-if-not-installed "playonlinux"
 fi
 
 # Software-center
 if [ "$osc" == 'y' ] || [ "$osc" == 'Y'  ]; then
-    eval "${install} software-center"
+    install-if-not-installed "software-center"
 fi
 
 # Unrar
 if [ "$unrar" == 'y' ] || [ "$unrar" == 'Y'  ]; then
-    eval "${install} unrar"
+    install-if-not-installed "unrar"
 fi
 
 # Chrome
@@ -208,7 +234,7 @@ if [ "$chrome" == 'y' ] || [ "$chrome" == 'Y'  ]; then
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
     eval "${pm} update"
-    eval "${install} google-chrome-stable"
+    install-if-not-installed "google-chrome-stable"
 fi
 
 # Skype
@@ -229,13 +255,13 @@ fi
 if [ "$phpstorm" == 'y' ] || [ "$phpstorm" == 'Y'  ]; then
     case $(type) in
         macos)
-            brew-install-if-not-installed "" phpstorm
+            brew-install-if-not-installed "" "phpstorm"
             ;;
         debian)
             snap install phpstorm --classic
             ;;
         ubuntu)
-            eval "${install} snapd snapd-xdg-openCopy"
+            install-if-not-installed "snapd snapd-xdg-openCopy"
             eval "snap install phpstorm --classic"
             ;;
         rhel)
@@ -254,7 +280,7 @@ if [ "$notepadqq" == 'y' ] || [ "$notepadqq" == 'Y'  ]; then
         ubuntu)
             add-apt-repository ppa:notepadqq-team/notepadqq -y
             eval "${pm} update"
-            eval "${install} notepadqq"
+            install-if-not-installed "notepadqq"
             ;;
         rhel)
             type="rhel"
@@ -265,21 +291,21 @@ fi
 
 # FileZilla
 if [ "$filezilla" == 'y' ] || [ "$filezilla" == 'Y'  ]; then
-    eval "${install} filezilla"
+    install-if-not-installed "filezilla"
 fi
 
 # zsh
 if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
 
     #oh-my-zsh
-    if [ ! -d "~/.oh-my-zsh" ]; then
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     fi
 
     eval "${install} zsh fzf"
 
     if [ -d "${ZSH_CUSTOM}/themes/powerlevel10k" ]; then
-        git -C ~$ZSH_CUSTOM/themes/powerlevel10k pull
+        git -C "~$ZSH_CUSTOM"/themes/powerlevel10k pull
     else
         git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
     fi
@@ -292,7 +318,7 @@ if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
 
     case $(type) in
           macos)
-              cd ~/Library/Fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+              cd "$HOME"/Library/Fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
               cd -
               ;;
           debian)
