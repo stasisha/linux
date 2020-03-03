@@ -66,7 +66,7 @@ read -p 'Would you like to install Notepadqq? [y/n]: ' notepadqq
 read -p 'Would you like to install Filezilla? [y/n]: ' filezilla
 read -p 'Would you like to install zsh? [y/n]: ' zsh
 
-#functions zone 
+#functions zone
 addLineToBottomIfNotExists() {
   local LINE=$1
   local FILE=$2
@@ -102,7 +102,7 @@ brew-install-if-not-installed() {
 
   for p in $(brew list); do
     caskSoftware=${caskSoftware//$p/}
-  done;  
+  done;
 
   if [ -z "$software" ] && [ -z "$caskSoftware" ]; then
     echo "Nothing to install."
@@ -129,7 +129,7 @@ brew-install-if-not-installed() {
 case $type in
     macos)
         # Mac special commands
-        read -p 'Would you like to install xcode-select? [y/n]: ' xcodeselect 
+        read -p 'Would you like to install xcode-select? [y/n]: ' xcodeselect
         install-brew
 
         ;;
@@ -155,48 +155,6 @@ case $type in
 esac
 
 install="${pm} -y install"
-
-# zsh
-if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
-
-    #oh-my-zsh
-    if [ ! -d "~/.oh-my-zsh" ]; then
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    fi
-
-    eval "${install} zsh fzf"
-    case $(type) in
-          macos)
-              cd ~/Library/Fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
-              cd -
-
-              if [ -d "${ZSH_CUSTOM}/themes/powerlevel10k" ]; then
-                  git -C ~$ZSH_CUSTOM/themes/powerlevel10k pull
-              else
-                  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
-              fi
-
-              curl -L https://raw.githubusercontent.com/stasisha/zsh/master/.appearance.sh -o ~/.appearance.sh
-
-              removeLine 'source $ZSH\/oh-my-zsh.sh' ~/.zshrc
-              addLineToBottomIfNotExists 'source ~/.appearance.sh' ~/.zshrc
-              addLineToBottomIfNotExists 'source $ZSH/oh-my-zsh.sh' ~/.zshrc
-
-              zsh -l
-              ;;
-          debian)
-
-              ;;
-          ubuntu)
-              eval "${install} snapd snapd-xdg-openCopy"
-              eval "snap install phpstorm --classic"
-              ;;
-          rhel)
-              type="rhel"
-              pm="yum"
-              ;;
-    esac
-fi
 
 # Xcode-select
 if [ "$xcodeselect" == 'y' ] || [ "$xcodeselect" == 'Y'  ]; then
@@ -239,7 +197,7 @@ fi
 
 # Skype
 if [ "$skype" == 'y' ] || [ "$skype" == 'Y'  ]; then
-    wget https://repo.skype.com/latest/skypeforlinux-64.deb  O /tmp/skypeforlinux-64.deb 
+    wget https://repo.skype.com/latest/skypeforlinux-64.deb  O /tmp/skypeforlinux-64.deb
     dpkg -i /tmp/skypeforlinux-64.deb
     rm -f /tmp/skypeforlinux-64.deb
 fi
@@ -292,4 +250,45 @@ fi
 # FileZilla
 if [ "$filezilla" == 'y' ] || [ "$filezilla" == 'Y'  ]; then
     eval "${install} filezilla"
+fi
+
+# zsh
+if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
+
+    #oh-my-zsh
+    if [ ! -d "~/.oh-my-zsh" ]; then
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    fi
+
+    eval "${install} zsh fzf"
+
+    if [ -d "${ZSH_CUSTOM}/themes/powerlevel10k" ]; then
+        git -C ~$ZSH_CUSTOM/themes/powerlevel10k pull
+    else
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
+    fi
+
+    curl -L https://raw.githubusercontent.com/stasisha/zsh/master/.appearance.sh -o ~/.appearance.sh
+
+    removeLine 'source $ZSH\/oh-my-zsh.sh' ~/.zshrc
+    addLineToBottomIfNotExists 'source ~/.appearance.sh' ~/.zshrc
+    addLineToBottomIfNotExists 'source $ZSH/oh-my-zsh.sh' ~/.zshrc
+
+    case $(type) in
+          macos)
+              cd ~/Library/Fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+              cd -
+
+              zsh -l
+              ;;
+          debian)
+
+              ;;
+          ubuntu)
+
+              ;;
+          rhel)
+
+              ;;
+    esac
 fi
