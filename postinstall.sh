@@ -254,6 +254,7 @@ if [ "$phpstorm" == 'y' ] || [ "$phpstorm" == 'Y'  ]; then
     case $(type) in
         macos)
             brew-install-if-not-installed "" phpstorm
+            ;;
         debian)
             wget https://download-cf.jetbrains.com/webide/PhpStorm-2018.2.2.tar.gz - O /tmp/PhpStorm.tar.gz
             tar xvf /tmp/PhpStorm.tar.gz
