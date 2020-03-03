@@ -1,6 +1,6 @@
-Ubuntu Post Install Script
+Post Install Script
 ==================================================
-How to run
+How to install
 ----------------------------
 Download and run installation script with single line:
 ```bash

@@ -1,5 +1,11 @@
 #!/bin/bash
-# Ubuntu post install wrapper
+# Linux post install wrapper
+#
+# Currently Supported Operating Systems:
+#
+# Ubuntu
+# RHEL/CentOS
+# Debian
 
 # Am I root?
 if [ "x$(id -u)" != 'x0' ]; then
@@ -7,8 +13,23 @@ if [ "x$(id -u)" != 'x0' ]; then
     exit 1
 fi
 
+# Detect OS
+case $(head -n1 /etc/issue | cut -f 1 -d ' ') in
+    Debian)
+        type="debian"
+        pm="apt-get"
+        ;;
+    Ubuntu)
+        type="ubuntu"
+        pm="apt-get"
+        ;;
+    *)
+        type="rhel"
+        pm="yum"
+        ;;
+esac
+
 read -p 'Would you like to upgrade system? [y/n]: ' upgrade
-read -p 'Would you like to install Play On Linux? [y/n]: ' pol
 read -p 'Would you like to install Software Center? [y/n]: ' osc
 read -p 'Would you like to install Unrar? [y/n]: ' unrar
 read -p 'Would you like to install Chrome? [y/n]: ' chrome
@@ -17,10 +38,32 @@ read -p 'Would you like to install Viber? [y/n]: ' viber
 read -p 'Would you like to install PhpStorm? [y/n]: ' phpstorm
 read -p 'Would you like to install Notepadqq? [y/n]: ' notepadqq
 read -p 'Would you like to install Filezilla? [y/n]: ' filezilla
+read -p 'Would you like to install Vesta? [y/n]: ' vesta
 
-pm="apt-get"
+case $type in
+    debian)
+        # Debian special commands
+        echo "deb http://http.us.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list
+        apt-get update
+        ;;
+    ubuntu)
+        # Ubuntu special commands
+        read -p 'Would you like to install Play On Linux? [y/n]: ' pol
+        ;;
+    rhel)
+        # RHEL/CentOS special commands
+        dhclient
+        yum update
+        ;;
+esac
 
 install="${pm} -y install"
+
+# Vesta
+if [ "$vesta" == 'y' ] || [ "$vesta" == 'Y'  ]; then
+    curl -O https://raw.githubusercontent.com/stasisha/vesta/master/install/vst-install.sh
+    bash vst-install.sh
+fi
 
 # Upgrade
 if [ "$upgrade" == 'y' ] || [ "$upgrade" == 'Y'  ]; then
@@ -66,15 +109,50 @@ fi
 
 # PhpStorm
 if [ "$phpstorm" == 'y' ] || [ "$phpstorm" == 'Y'  ]; then
-    eval "${install} snapd snapd-xdg-openCopy"
-    eval "snap install phpstorm --classic"
+
+    case $(type) in
+        debian)
+            wget https://download-cf.jetbrains.com/webide/PhpStorm-2018.2.2.tar.gz - O /tmp/PhpStorm.tar.gz
+            tar xvf /tmp/PhpStorm.tar.gz
+            ;;
+        ubuntu)
+            eval "${install} snapd snapd-xdg-openCopy"
+            eval "snap install phpstorm --classic"
+            ;;
+        rhel)
+            type="rhel"
+            pm="yum"
+            ;;
+    esac
 fi
 
 # Notepadqq
 if [ "$notepadqq" == 'y' ] || [ "$notepadqq" == 'Y'  ]; then
-    add-apt-repository ppa:notepadqq-team/notepadqq -y
-    eval "${pm} update"
-    eval "${install} notepadqq"
+    case $(type) in
+        debian)
+            #https://launchpad.net/%7Enotepadqq-team/+archive/ubuntu/notepadqq/+packages
+        
+            #amd64
+            https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+build/13579637
+            #i386
+            https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+build/13579638
+            
+            #common
+            https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+files/notepadqq-common_1.2.0-1~zesty1_all.deb
+            
+            dpkg -i notepadqq-common_1.2.0-1~zesty1_all.deb 
+            dpkg -i notepadqq_1.2.0-1~zesty1_i386.deb
+            ;;
+        ubuntu)
+            add-apt-repository ppa:notepadqq-team/notepadqq -y
+            eval "${pm} update"
+            eval "${install} notepadqq"
+            ;;
+        rhel)
+            type="rhel"
+            pm="yum"
+            ;;
+    esac
 fi
 
 # FileZilla
