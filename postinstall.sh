@@ -77,17 +77,18 @@ removeLine(){
     sed -i "" -e "/^$1/d" $2
 }
 
+installxcode(){
+    command -v xcode-select >/dev/null 2>&1 || {
+        echo >&2 "Installing xcode-select..."
+        xcode-select --install
+    }
+}
+
 install-brew(){
   command -v brew >/dev/null 2>&1 || {
     echo >&2 "Installing homebrew..."
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   }
-}
-
-install-xcode(){
-    command -v xcode-select >/dev/null 2>&1 || {
-    echo >&2 "Installing xcode-select..."
-    xcode-select --install
 }
 
 brew-install-if-not-installed() {
@@ -137,6 +138,7 @@ case $type in
         read -p 'Would you like to install Software Center? [y/n]: ' osc
         read -p 'Would you like to install Play On Linux? [y/n]: ' pol
 
+        apt install snapd snapd-xdg-open
         echo "deb http://http.us.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list
         apt-get update
         ;;
@@ -256,8 +258,7 @@ if [ "$phpstorm" == 'y' ] || [ "$phpstorm" == 'Y'  ]; then
             brew-install-if-not-installed "" phpstorm
             ;;
         debian)
-            wget https://download-cf.jetbrains.com/webide/PhpStorm-2018.2.2.tar.gz - O /tmp/PhpStorm.tar.gz
-            tar xvf /tmp/PhpStorm.tar.gz
+            snap install phpstorm --classic
             ;;
         ubuntu)
             eval "${install} snapd snapd-xdg-openCopy"
@@ -274,18 +275,7 @@ fi
 if [ "$notepadqq" == 'y' ] || [ "$notepadqq" == 'Y'  ]; then
     case $(type) in
         debian)
-            #https://launchpad.net/%7Enotepadqq-team/+archive/ubuntu/notepadqq/+packages
-        
-            #amd64
-            https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+build/13579637
-            #i386
-            https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+build/13579638
-            
-            #common
-            https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+files/notepadqq-common_1.2.0-1~zesty1_all.deb
-            
-            dpkg -i notepadqq-common_1.2.0-1~zesty1_all.deb 
-            dpkg -i notepadqq_1.2.0-1~zesty1_i386.deb
+            snap install notepadqq
             ;;
         ubuntu)
             add-apt-repository ppa:notepadqq-team/notepadqq -y
