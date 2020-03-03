@@ -91,6 +91,11 @@ install-brew(){
   }
 }
 
+installNerdFontsLinux(){
+    mkdir -p ~/.local/share/fonts
+    cd ~/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+}
+
 brew-install-if-not-installed() {
   local software=$1
   local caskSoftware=$2
@@ -131,13 +136,12 @@ case $type in
         # Mac special commands
         read -p 'Would you like to install xcode-select? [y/n]: ' xcodeselect
         install-brew
-
         ;;
     debian)
         # Debian special commands
         read -p 'Would you like to install Software Center? [y/n]: ' osc
         read -p 'Would you like to install Play On Linux? [y/n]: ' pol
-
+        read -p 'Would you like to install Synology Guest Tool? [y/n]: ' synology
         apt install snapd snapd-xdg-open
         echo "deb http://http.us.debian.org/debian stable main contrib non-free" >> /etc/apt/sources.list
         apt-get update
@@ -146,9 +150,13 @@ case $type in
         # Ubuntu special commands
         read -p 'Would you like to install Software Center? [y/n]: ' osc
         read -p 'Would you like to install Play On Linux? [y/n]: ' pol
+        read -p 'Would you like to install Synology Guest Tool? [y/n]: ' synology
         ;;
     rhel)
         # RHEL/CentOS special commands
+        read -p 'Would you like to install Software Center? [y/n]: ' osc
+        read -p 'Would you like to install Play On Linux? [y/n]: ' pol
+        read -p 'Would you like to install Synology Guest Tool? [y/n]: ' synology
         dhclient
         yum update
         ;;
@@ -170,6 +178,11 @@ fi
 # Upgrade
 if [ "$upgrade" == 'y' ] || [ "$upgrade" == 'Y'  ]; then
     eval "${pm} upgrade"
+fi
+
+# synology
+if [ "$synology" == 'y' ] || [ "$synology" == 'Y'  ]; then
+    eval "${pm} qemu-guest-agent"
 fi
 
 # Play On Linux
@@ -278,17 +291,17 @@ if [ "$zsh" == 'y' ] || [ "$zsh" == 'Y'  ]; then
           macos)
               cd ~/Library/Fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
               cd -
-
-              zsh -l
               ;;
           debian)
-
+              installNerdFontsLinux
               ;;
           ubuntu)
-
+              installNerdFontsLinux
               ;;
           rhel)
-
+              installNerdFontsLinux
               ;;
     esac
+
+    zsh -l
 fi
